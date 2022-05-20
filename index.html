@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <title>DAWsome</title>
+        <link rel="stylesheet" href="dawsome.css" type="text/css">
+    </head>
+    <body>
+        <h1>DAWsome</h1>
+        <div id="dawsome" class="dawsome">
+            <p class="toolbar">
+                <button id="togglePlayback" type="button" class="button play" title="Play">Play</button>
+                <button id="toggleRecording" type="button" class="button record" title="Start recording">Record</button>
+                <select id="audioSource"></select>
+                <meter id="inputLevelMeter" high="0.25" max="1" value="0" style="width:100%"></meter>
+            </p>
+            <p id="recorderState"></p>
+            <canvas id="waveform"></canvas>
+        </div>
+        <script src="dawsome.js" type="text/javascript"></script>
+    </body>
+</html>

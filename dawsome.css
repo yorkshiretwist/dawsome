@@ -1,0 +1,10 @@
+.dawsome {
+    border-radius: 0.3em;
+    background: #f1f3f4;
+    padding: 0.5em;
+}
+.dawsome .toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 3fr 3fr;
+    column-gap: 0.5em;
+}
