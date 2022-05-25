@@ -86,13 +86,19 @@ const Dawsome = () =>
 
 		// set up event listeners for UI elements
 		const prepareUi = () => {
-			// get the width of the wrapper, so we can explicitely set the width of the other elements
-			let wrapperWidth = wrapper.getBoundingClientRect().width;
-			frequencyAnalyserCanvas.style.width = Math.round(wrapperWidth - 16) + 'px';
+			setCanvasSizes();
 			updateClock(audioPosition);
 			toggleRecordingButton.addEventListener("click", toggleRecording);
 			togglePlaybackButton.addEventListener("click", togglePlayback);
 			resetTracksButton.addEventListener("click", resetTracks);
+			window.addEventListener("resize", debounce(setCanvasSizes));
+		};
+
+		const setCanvasSizes = () => {
+			// get the width of the wrapper, so we can explicitely set the width of the other elements
+			let wrapperWidth = wrapper.getBoundingClientRect().width;
+			frequencyAnalyserCanvas.style.width =
+				Math.round(wrapperWidth - 16) + "px";
 		};
 
 		const prepareEventEmissions = () => {
@@ -361,6 +367,22 @@ const Dawsome = () =>
 
 		const logError = (error) => {
 			console.error("Error: ", error);
+		};
+
+		const debounce = (func, wait, immediate) => {
+			var timeout;
+			return function () {
+				var context = this,
+					args = arguments;
+				var later = function () {
+					timeout = null;
+					if (!immediate) func.apply(context, args);
+				};
+				var callNow = immediate && !timeout;
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+				if (callNow) func.apply(context, args);
+			};
 		};
 
 		resolve({ startRecording, stopRecording, prepare });
