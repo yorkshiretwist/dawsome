@@ -1,21 +1,59 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>DAWsome</title>
-        <link rel="stylesheet" href="dawsome.css" type="text/css">
-    </head>
-    <body>
-        <h1>DAWsome</h1>
-        <div id="dawsome" class="dawsome">
-            <p class="toolbar">
-                <button id="togglePlayback" type="button" class="button play" title="Play">Play</button>
-                <button id="toggleRecording" type="button" class="button record" title="Start recording">Record</button>
-                <select id="audioSource"></select>
-                <meter id="inputLevelMeter" high="0.25" max="1" value="0" style="width:100%"></meter>
+	<head>
+		<title>DAWsome</title>
+		<link rel="stylesheet" href="dawsome.css" type="text/css" />
+	</head>
+	<body>
+		<h1>DAWsome</h1>
+		<div id="dawsome" class="dawsome">
+			<div class="toolbar">
+				<p id="buttons" class="toolbar-buttons">
+					<button
+						id="togglePlayback"
+						type="button"
+						class="button play"
+						title="Play"
+					>
+						Play
+					</button>
+					<button
+						id="toggleRecording"
+						type="button"
+						class="button record"
+						title="Start recording"
+					>
+						Record
+					</button>
+					<button
+						id="resetTracks"
+						type="button"
+						class="button reset"
+						title="Reset"
+					>
+						Reset
+					</button>
+				</p>
+                <p id="clock-display" class="toolbar-clock-display">
+                    <span id="clock" aria-label="Audio position">00:00.0</span>
+                </p>
+                <p id="input" class="toolbar-input-selector">
+				<select id="audioSource"></select>
+				<span class="meter">
+					<span class="bg"></span>
+					<span class="cover" id="inputLevelMeter"></span>
+				</span>
             </p>
-            <p id="recorderState"></p>
-            <canvas id="waveform"></canvas>
-        </div>
-        <script src="dawsome.js" type="text/javascript"></script>
-    </body>
+			</div>
+			<canvas
+				id="frequencyAnalyser"
+				width="1024"
+				height="100"
+				class="analyser"
+			></canvas>
+			<div id="playlist"></div>
+		</div>
+        <script src="waveform-playlist.js"></script>
+		<script src="dawsome.js" type="text/javascript"></script>
+	</body>
 </html>

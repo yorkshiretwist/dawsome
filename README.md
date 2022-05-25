@@ -15,3 +15,9 @@ And maybe in the future:
 - Basic effects like compressor, delay, reverb
 - Export of mixed session
 - Export of stems
+
+## Dependencies
+
+I originally tried writing this from scratch myself, but then I discovered the incredible [Waveform Playlist](https://github.com/naomiaro/waveform-playlist) project by [naomiaro](https://github.com/naomiaro/) and felt it was better for me to build what I wanted on top of that.
+
+Waveform Playlist is [released under the MIT license](https://github.com/naomiaro/waveform-playlist/blob/main/LICENSE.md).

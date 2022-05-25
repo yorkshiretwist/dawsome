@@ -1,10 +1,145 @@
+h1 {
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
 .dawsome {
     border-radius: 0.3em;
-    background: #f1f3f4;
+    background: #e3e3e3;
     padding: 0.5em;
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
 }
+
+/* Toolbar */
 .dawsome .toolbar {
     display: grid;
-    grid-template-columns: 1fr 1fr 3fr 3fr;
+    grid-template-columns: 1fr 1fr 1fr;
     column-gap: 0.5em;
+    padding: 0.6em 0;
+}
+.dawsome .toolbar p {
+    padding: 0;
+    margin: 0;
+}
+.dawsome .toolbar-input-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0.5em;
+}
+.dawsome p.toolbar-clock-display {
+    box-shadow: inset 0px 0px 10px 0px rgba(255,255,255,0.75);
+    border-radius: 0.3em;
+    padding: 0 0.3em;
+    background: #202020;
+    color: #fefefe;
+    text-align: right;
+    font-size: 1.4em;
+    margin: -2px 0 -2px 0;
+}
+.dawsome .toolbar-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.dawsome .toolbar button,
+.dawsome .toolbar select {
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+    border-radius: 0;
+    border: 0;
+    background-image: linear-gradient(180deg, 
+        hsl(0,0%,78%)  0%, 
+        hsl(0,0%,90%) 47%, 
+        hsl(0,0%,78%) 53%,
+        hsl(0,0%,70%)100%);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    transition: all 0.2s;
+    height: 1.9em;
+}
+.dawsome .toolbar button {
+    border-right: 1px solid #aaa;
+}
+.dawsome .toolbar button:hover,
+.dawsome .toolbar button:focus {
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.75);
+}
+.dawsome .toolbar button:active {
+    box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
+}
+.dawsome .toolbar button:first-child {
+    border-radius: 0.3em 0 0 0.3em;
+}
+.dawsome .toolbar button:last-child {
+    border-radius: 0 0.3em 0.3em 0;
+    border: 0;
+}
+.dawsome .toolbar button.recording {
+    background-image: linear-gradient(180deg, 
+        hsl(0, 35.9%, 74.3%) 0%, 
+        hsl(0, 47.7%, 78.2%) 47%, 
+        hsl(0, 41.4%, 80.6%) 53%, 
+        hsl(0, 65.1%, 55.1%)100%);
+}
+.dawsome .toolbar button.playing {
+    background-image: linear-gradient(180deg, 
+        hsl(114.9, 54.7%, 74.9%) 0%, 
+        hsl(115.7, 55.3%, 85.1%) 47%, 
+        hsl(124.6, 39.4%, 74.1%) 53%, 
+        hsl(137.7, 65.1%, 55.1%)100%);
+}
+
+/* Playlist tracks */
+.dawsome .playlist .channel {
+    background: #54ff54; 
+}
+.dawsome .playlist .channel-progress {
+    background: #519b51;
+}
+.dawsome .playlist .cursor {
+    background: #fff;
+}
+.dawsome .playlist .playlist-tracks {
+    background: #202020;
+}
+.dawsome .playlist .selection.segment {
+    background: #000;
+}
+.dawsome .playlist .selection.point {
+    color: #c00;
+}
+.dawsome .playlist .playlist-time-scale {
+    height: 30px;
+}
+.dawsome .playlist .state-cursor,
+.dawsome .playlist .state-select {
+    cursor: text;
+}
+
+/* Analysers */
+.dawsome .analyser {
+    background: #202020;
+}
+
+/* Input meter */
+.dawsome .meter,
+.dawsome .meter .bg,
+.dawsome .meter .cover {
+    display: block;
+}
+.dawsome .meter {
+    position: relative;
+    border: 1px solid #ccc;
+    border-width: 0 0 0 1px;
+}
+.dawsome .meter .bg,
+.dawsome .meter .cover {
+    position: absolute;
+    height: 24px;
+    width: 100%;
+}
+.dawsome .meter .bg {
+    left: 0;
+    background-image: linear-gradient(to left, red 1%, rgb(255, 255, 0) 16%, rgb(12, 255, 12) 45%, rgb(0, 136, 0) 100%);
+}
+.dawsome .meter .cover {
+    right: 0;  
+    width: 100%;
+    background: #e3e3e3;
+    transition: width 0.1s ease 0s;
 }
