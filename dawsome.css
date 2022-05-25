@@ -48,6 +48,9 @@ h1 {
     grid-template-columns: 1fr 1fr;
     column-gap: 0.5em;
 }
+.dawsome .toolbar-input-selector select {
+    max-width: 10em;
+}
 .dawsome p.toolbar-clock-display {
     box-shadow: inset 0px 0px 10px 0px rgba(255,255,255,0.75);
     border-radius: 0.3em;
