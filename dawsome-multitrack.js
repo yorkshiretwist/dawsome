@@ -27,7 +27,10 @@ const Dawsome = () =>
 		const returnPlayheadButton = document.getElementById("returnPlayhead");
 		const frequencyAnalyserCanvas =
 			document.getElementById("frequencyAnalyser");
-		const getStarted = document.getElementById("getStarted");
+		const masterGainInput = document.getElementById("masterGain");
+		const renderButton = document.getElementById("render");
+		const message = document.querySelector(".dawsome .message");
+		const downloadLink = document.getElementById("downloadLink");
 
 		// sets up dawsome
 		const prepare = () => {
@@ -88,16 +91,29 @@ const Dawsome = () =>
 		// set up event listeners for UI elements
 		const prepareUi = () => {
 			setCanvasSizes();
+			
 			updateClock(audioPosition);
+			
 			toggleRecordingButton.disabled = false;
 			toggleRecordingButton.addEventListener("click", toggleRecording);
+			
 			togglePlaybackButton.disabled = false;
 			togglePlaybackButton.addEventListener("click", togglePlayback);
+			
 			resetTracksButton.disabled = false;
 			resetTracksButton.addEventListener("click", resetTracks);
+			
 			returnPlayheadButton.disabled = false;
 			returnPlayheadButton.addEventListener("click", returnPlayhead);
+			
+			masterGainInput.disabled = false;
+			masterGainInput.addEventListener("change", changeMasterGain);
+
+			renderButton.disabled = false;
+			renderButton.addEventListener("click", startRendering);
+
 			audioSourceSelect.disabled = false;
+
 			window.addEventListener("resize", debounce(setCanvasSizes));
 			wrapper.classList.remove("disabled");
 			wrapper.classList.add("enabled");
@@ -172,7 +188,9 @@ const Dawsome = () =>
 					}
 
 					downloadUrl = window.URL.createObjectURL(data);
-					displayDownloadLink(downloadUrl);
+					var dateString = new Date().toISOString();
+					let filename = "waveformplaylist" + dateString + ".wav";
+					downloadLink.innerHTML = '<a href="' + downloadUrl + '" download="' + filename + '">Download</a>';
 				}
 			});
 
@@ -296,6 +314,21 @@ const Dawsome = () =>
 			});
 		}
 
+		// change the master gain
+		const changeMasterGain = (e) => {
+			ee.emit("mastervolumechange", e.target.value);
+		};
+
+		// starts rendering of the files
+		const startRendering = () => {
+			var tracks = document.querySelectorAll("#playlist .playlist-tracks .channel-wrapper");
+			if (!tracks || !tracks.length) {
+				setMessage("No tracks to render");
+				return;
+			}
+			ee.emit('startaudiorendering', 'wav');
+		};
+
 		// starts or stop recording, based on the state of the recorder
 		const toggleRecording = () => {
 			if (toggleRecordingButton.classList.contains("recording")) {
@@ -310,9 +343,15 @@ const Dawsome = () =>
 			if (toggleRecordingButton.classList.contains("recording")) {
 				return;
 			}
-			getStarted.style.display = 'block';
+			setStopped();
 			ee.emit("clear");
 			updateClock(0);
+			resetDownload();
+		};
+
+		// remove the download link
+		const resetDownload = () => {
+			downloadLink.innerHTML = '';
 		};
 
 		// start recording
@@ -321,7 +360,8 @@ const Dawsome = () =>
 			swapClasses(toggleRecordingButton, "record", "recording");
 			toggleRecordingButton.title = "Stop";
 			toggleRecordingButton.innerText = "Stop";
-			getStarted.style.display = 'none';
+			setMessage("Recording...");
+			resetDownload();
 			// start recording
 			ee.emit("record");
 		};
@@ -332,6 +372,7 @@ const Dawsome = () =>
 			swapClasses(toggleRecordingButton, "recording", "record");
 			toggleRecordingButton.title = "Record";
 			toggleRecordingButton.innerText = "Record";
+			setMessage("Recording finished");
 			// stop the recording
 			setStopped();
 			ee.emit("stop");
@@ -365,6 +406,7 @@ const Dawsome = () =>
 			swapClasses(togglePlaybackButton, "playing", "play");
 			togglePlaybackButton.title = "Play";
 			togglePlaybackButton.innerText = "Play";
+			setMessage("Ready");
 		};
 
 		// set the player as paused
@@ -372,6 +414,7 @@ const Dawsome = () =>
 			swapClasses(togglePlaybackButton, "playing", "play");
 			togglePlaybackButton.title = "Play";
 			togglePlaybackButton.innerText = "Play";
+			setMessage("Paused");
 		};
 
 		// set the player as playing
@@ -379,12 +422,17 @@ const Dawsome = () =>
 			swapClasses(togglePlaybackButton, "play", "playing");
 			togglePlaybackButton.title = "Pause";
 			togglePlaybackButton.innerText = "Pause";
+			setMessage("Playing...");
 		};
 
 		// swap CSS classes on an element
 		const swapClasses = (element, classToRemove, classToAdd) => {
 			element.classList.remove(classToRemove);
 			element.classList.add(classToAdd);
+		};
+
+		const setMessage = (msg) => {
+			message.innerHTML = msg;
 		};
 
 		const log = (msg) => {

@@ -8,7 +8,7 @@
 		<div class="wrapper">
 			<h1>DAWsome MultiTrack</h1>
 			<div id="dawsome" class="dawsome disabled">
-				<div class="toolbar">
+				<div class="toolbar row-one">
 					<p id="buttons" class="toolbar-buttons">
 						<button
 							id="togglePlayback"
@@ -50,6 +50,20 @@
 						</span>
 					</p>
 				</div>
+				<div class="toolbar row-two">
+					<p class="message">
+						Ready...
+					</p>
+					<p>
+						<input type="range" min="0" max="100" value="100" class="master-gain" id="masterGain" disabled>
+					</p>
+					<p>
+						<span id="downloadLink"></span>
+					</p>
+					<p class="text-r">
+						<button id="render" type="button" class="btn-download">Render</button>
+					</p>
+				</div>
 				<div id="enablerMessage" class="enabler-message">
 					<p>Click the button to enable the recorder</p>
 					<p><button id="enableDawsome">Enable recorder</button></p>
@@ -60,7 +74,6 @@
 					height="100"
 					class="analyser"
 				></canvas>
-				<p id="getStarted" class="get-started">Press 'record' to record something</p>
 				<div id="playlist"></div>
 			</div>
 		</div>

@@ -14,6 +14,10 @@ h1 {
     font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
 }
 
+.text-r {
+    text-align: right;
+}
+
 /* Enabler message */
 .dawsome .enabler-message {
     text-align: center;
@@ -29,15 +33,23 @@ h1 {
     display: none;
 }
 
-/* Toolbar */
-.dawsome.disabled .toolbar {
+/* Toolbar and message */
+.dawsome.disabled .toolbar,
+.dawsome.disabled .message {
     display: none;
 }
-.dawsome.enabled .toolbar {
+.dawsome.enabled .message {
+    display: block;
+}
+.dawsome.enabled .toolbar.row-one,
+.dawsome.enabled .toolbar.row-two {
     display: grid;
     grid-template-columns: 3fr 1fr 2fr;
     column-gap: 0.5em;
     padding: 0.6em 0;
+}
+.dawsome.enabled .toolbar.row-two {
+    grid-template-columns: 3fr 2fr 1fr 1fr;
 }
 .dawsome .toolbar p {
     padding: 0;
@@ -65,6 +77,8 @@ h1 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
+
+/* Form controls */
 .dawsome button,
 .dawsome select {
     font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
@@ -78,6 +92,9 @@ h1 {
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
     transition: all 0.2s;
     height: 1.9em;
+}
+.dawsome .toolbar.row-two input {
+    width: 100%;
 }
 .dawsome button {
     border-right: 1px solid #aaa;
@@ -112,14 +129,18 @@ h1 {
 .dawsome button.btn-solo:before,
 .dawsome button.track-collapse:before,
 .dawsome button.track-remove:before,
-.dawsome .controls label.volume:before,
-.dawsome .controls label.volume:after {
+.dawsome label.volume:before,
+.dawsome label.volume:after,
+.dawsome button.btn-download:before {
     content: '';
     width: 16px;
     height: 16px;
     display: inline-block;
     vertical-align: bottom;
     margin-right: 4px;
+}
+.dawsome button.btn-download:before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M4 19h16v-7h2v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-8h2v7zM14 9h5l-7 7-7-7h5V3h4v6z'/%3E%3C/svg%3E");
 }
 .dawsome button.play:before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M19.376 12.416L8.777 19.482A.5.5 0 0 1 8 19.066V4.934a.5.5 0 0 1 .777-.416l10.599 7.066a.5.5 0 0 1 0 .832z'/%3E%3C/svg%3E");
@@ -188,6 +209,12 @@ h1 {
 .dawsome .channel-wrapper {
     border-bottom: 1px solid #e3e3e3;
 }
+.dawsome .channel-wrapper.silent .track-header span {
+    text-decoration: line-through;
+}
+.dawsome .channel-wrapper.silent .channel {
+    opacity: 0.3;
+}
 .dawsome .controls {
     background-color: #e3e3e3;
     padding: 0.3em 0;
@@ -211,8 +238,8 @@ h1 {
 .dawsome button.track-remove:before,
 .dawsome button.btn-mute:before,
 .dawsome button.btn-solo:before,
-.dawsome .controls label.volume:before,
-.dawsome .controls label.volume:after {
+.dawsome label.volume:before,
+.dawsome label.volume:after {
     width: 12px;
     height: 12px;
     margin-right: 3px;
@@ -227,11 +254,10 @@ h1 {
     margin: 0;
 }
 .dawsome button.track-collapse:before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
-    width: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='12' height='12'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M8 7a5 5 0 1 0 0 10h8a5 5 0 0 0 0-10H8zm0-2h8a7 7 0 0 1 0 14H8A7 7 0 0 1 8 5zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z'/%3E%3C/svg%3E");
 }
 .dawsome button.track-remove:before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='12' height='12'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M7 6V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6h5zm2-2v2h6V4H9z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='12' height='12'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z'/%3E%3C/svg%3E");
 }
 .dawsome .controls .btn-group {
     display: grid;
@@ -246,7 +272,7 @@ h1 {
     display: block;
     text-align: center;
 }
-.dawsome .controls label input[type="range"]  {
+.dawsome input[type="range"]  {
     width: 70%;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -254,19 +280,19 @@ h1 {
     display: inline-block;
     background-color: #e3e3e3;
 }
-.playlist .controls input[type="range"]::-webkit-slider-runnable-track {
+.dawsome input[type="range"]::-webkit-slider-runnable-track {
     height: 5px;
     background: #818181; 
     border: none;
     border-radius: 3px; 
 }
-.playlist .controls input[type="range"]::-moz-range-track {
+.dawsome input[type="range"]::-moz-range-track {
     height: 5px;
     background: #818181;
     border: none;
     border-radius: 3px; 
 }
-.playlist .controls input[type="range"]::-webkit-slider-thumb {
+.dawsome input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -278,7 +304,7 @@ h1 {
     margin-top: -4px;
     cursor: ew-resize; 
 }
-.playlist .controls input[type="range"]::-moz-range-thumb {
+.dawsome input[type="range"]::-moz-range-thumb {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -290,19 +316,19 @@ h1 {
     margin-top: -4px;
     cursor: ew-resize; 
 }
-.playlist .controls input[type="range"]:focus {
+.dawsome input[type="range"]:focus {
     outline: none; 
 }
-.playlist .controls input[type="range"]:focus::-webkit-slider-runnable-track {
+.dawsome input[type="range"]:focus::-webkit-slider-runnable-track {
     background: rgb(58, 58, 58);
 }
-.playlist .controls input[type="range"]:focus::-moz-range-track {
+.dawsome input[type="range"]:focus::-moz-range-track {
     background: rgb(58, 58, 58);
 }
-.playlist .controls input[type="range"]:focus::-webkit-slider-thumb {
+.dawsome input[type="range"]:focus::-webkit-slider-thumb {
     background: #000;
 }
-.playlist .controls input[type="range"]:focus::-moz-range-thumb {
+.dawsome input[type="range"]:focus::-moz-range-thumb {
     background: #000;
 }
 .dawsome .controls label.volume:before,
