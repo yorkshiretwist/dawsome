@@ -24,8 +24,13 @@ const Dawsome = () =>
 		const togglePlaybackButton = document.getElementById("togglePlayback");
 		const clock = document.getElementById("clock");
 		const resetTracksButton = document.getElementById("resetTracks");
+		const returnPlayheadButton = document.getElementById("returnPlayhead");
 		const frequencyAnalyserCanvas =
 			document.getElementById("frequencyAnalyser");
+		const masterGainInput = document.getElementById("masterGain");
+		const renderButton = document.getElementById("render");
+		const message = document.querySelector(".dawsome .message");
+		const downloadLink = document.getElementById("downloadLink");
 
 		// sets up dawsome
 		const prepare = () => {
@@ -40,7 +45,7 @@ const Dawsome = () =>
 				// turn on the timescale
 				timescale: true,
 				isAutomaticScroll: true,
-				waveHeight: 100,
+				waveHeight: 120,
 				samplesPerPixel: 1000,
 				zoomLevels: [1000, 5000, 9000],
 				waveHeight: 100,
@@ -87,11 +92,32 @@ const Dawsome = () =>
 		// set up event listeners for UI elements
 		const prepareUi = () => {
 			setCanvasSizes();
+			
 			updateClock(audioPosition);
+			
+			toggleRecordingButton.disabled = false;
 			toggleRecordingButton.addEventListener("click", toggleRecording);
+			
+			togglePlaybackButton.disabled = false;
 			togglePlaybackButton.addEventListener("click", togglePlayback);
+			
+			resetTracksButton.disabled = false;
 			resetTracksButton.addEventListener("click", resetTracks);
+			
+			returnPlayheadButton.disabled = false;
+			returnPlayheadButton.addEventListener("click", returnPlayhead);
+			
+			masterGainInput.disabled = false;
+			masterGainInput.addEventListener("change", changeMasterGain);
+
+			renderButton.disabled = false;
+			renderButton.addEventListener("click", startRendering);
+
+			audioSourceSelect.disabled = false;
+
 			window.addEventListener("resize", debounce(setCanvasSizes));
+			wrapper.classList.remove("disabled");
+			wrapper.classList.add("enabled");
 		};
 
 		const setCanvasSizes = () => {
@@ -105,19 +131,19 @@ const Dawsome = () =>
 			ee.on("timeupdate", updateClock);
 
 			ee.on("mute", function (track) {
-				displaySoundStatus("Mute button pressed for " + track.name);
+				log("Mute button pressed for " + track.name);
 			});
 
 			ee.on("solo", function (track) {
-				displaySoundStatus("Solo button pressed for " + track.name);
+				log("Solo button pressed for " + track.name);
 			});
 
 			ee.on("volumechange", function (volume, track) {
-				displaySoundStatus(track.name + " now has volume " + volume + ".");
+				log(track.name + " now has volume " + volume + ".");
 			});
 
 			ee.on("mastervolumechange", function (volume) {
-				displaySoundStatus("Master volume now has volume " + volume + ".");
+				log("Master volume now has volume " + volume + ".");
 			});
 
 			var audioStates = ["uninitialized", "loading", "decoding", "finished"];
@@ -129,7 +155,7 @@ const Dawsome = () =>
 					name = src.name;
 				}
 
-				displayLoadingData(
+				log(
 					"Track " + name + " is in state " + audioStates[state]
 				);
 			});
@@ -141,19 +167,19 @@ const Dawsome = () =>
 					name = src.name;
 				}
 
-				displayLoadingData("Track " + name + " has loaded " + percent + "%");
+				log("Track " + name + " has loaded " + percent + "%");
 			});
 
 			ee.on("audiosourcesloaded", function () {
-				displayLoadingData("Tracks have all finished decoding.");
+				log("Tracks have all finished decoding.");
 			});
 
 			ee.on("audiosourcesrendered", function () {
-				displayLoadingData("Tracks have been rendered");
+				log("Tracks have been rendered");
 			});
 
 			ee.on("audiosourceserror", function (e) {
-				displayLoadingData(e.message);
+				logError(e);
 			});
 
 			ee.on("audiorenderingfinished", function (type, data) {
@@ -163,7 +189,9 @@ const Dawsome = () =>
 					}
 
 					downloadUrl = window.URL.createObjectURL(data);
-					displayDownloadLink(downloadUrl);
+					var dateString = new Date().toISOString();
+					let filename = "waveformplaylist" + dateString + ".wav";
+					downloadLink.innerHTML = '<a href="' + downloadUrl + '" download="' + filename + '">Download</a>';
 				}
 			});
 
@@ -227,7 +255,7 @@ const Dawsome = () =>
 
 			// connect the frequency analyser
 			const frequencyAnalyserNode = playlist.ac.createAnalyser();
-			frequencyAnalyserNode.fftSize = 2048;
+			frequencyAnalyserNode.fftSize = 1024;
 			mediaStreamAudioSourceNode.connect(frequencyAnalyserNode);
 
 			// analyzer draw code here
@@ -243,6 +271,7 @@ const Dawsome = () =>
 				frequencyAnalyserContext.fillStyle = "#F6D565";
 				frequencyAnalyserContext.lineCap = "round";
 				var multiplier = frequencyAnalyserNode.frequencyBinCount / numBars;
+				var out = document.getElementById("out");
 				// Draw rectangle for each frequency bin.
 				for (var i = 0; i < numBars; ++i) {
 					var magnitude = 0;
@@ -287,6 +316,21 @@ const Dawsome = () =>
 			});
 		}
 
+		// change the master gain
+		const changeMasterGain = (e) => {
+			ee.emit("mastervolumechange", e.target.value);
+		};
+
+		// starts rendering of the files
+		const startRendering = () => {
+			var tracks = document.querySelectorAll("#playlist .playlist-tracks .channel-wrapper");
+			if (!tracks || !tracks.length) {
+				setMessage("No tracks to render");
+				return;
+			}
+			ee.emit('startaudiorendering', 'wav');
+		};
+
 		// starts or stop recording, based on the state of the recorder
 		const toggleRecording = () => {
 			if (toggleRecordingButton.classList.contains("recording")) {
@@ -301,8 +345,15 @@ const Dawsome = () =>
 			if (toggleRecordingButton.classList.contains("recording")) {
 				return;
 			}
+			setStopped();
 			ee.emit("clear");
 			updateClock(0);
+			resetDownload();
+		};
+
+		// remove the download link
+		const resetDownload = () => {
+			downloadLink.innerHTML = '';
 		};
 
 		// start recording
@@ -311,8 +362,11 @@ const Dawsome = () =>
 			swapClasses(toggleRecordingButton, "record", "recording");
 			toggleRecordingButton.title = "Stop";
 			toggleRecordingButton.innerText = "Stop";
-			// start recording
+			setMessage("Recording...");
+			resetDownload();
+			// clear the previous track - we only allow one track to be recorded
 			ee.emit("clear");
+			// start recording
 			ee.emit("record");
 		};
 
@@ -322,6 +376,7 @@ const Dawsome = () =>
 			swapClasses(toggleRecordingButton, "recording", "record");
 			toggleRecordingButton.title = "Record";
 			toggleRecordingButton.innerText = "Record";
+			setMessage("Recording finished");
 			// stop the recording
 			setStopped();
 			ee.emit("stop");
@@ -329,6 +384,9 @@ const Dawsome = () =>
 
 		// play or pause, depending on the current state of the player
 		const togglePlayback = async () => {
+			if (toggleRecordingButton.classList.contains("recording")) {
+				return;
+			}
 			if (togglePlaybackButton.classList.contains("playing")) {
 				setPaused();
 				ee.emit("pause");
@@ -338,11 +396,21 @@ const Dawsome = () =>
 			}
 		};
 
+		// return the playhead to the start
+		const returnPlayhead = () => {
+			if (toggleRecordingButton.classList.contains("recording")) {
+				return;
+			}
+			setStopped();
+			ee.emit("rewind");
+		};
+
 		// set the player as stopped because the end of the audio has been reached
 		const setStopped = () => {
 			swapClasses(togglePlaybackButton, "playing", "play");
 			togglePlaybackButton.title = "Play";
 			togglePlaybackButton.innerText = "Play";
+			setMessage("Ready");
 		};
 
 		// set the player as paused
@@ -350,6 +418,7 @@ const Dawsome = () =>
 			swapClasses(togglePlaybackButton, "playing", "play");
 			togglePlaybackButton.title = "Play";
 			togglePlaybackButton.innerText = "Play";
+			setMessage("Paused");
 		};
 
 		// set the player as playing
@@ -357,6 +426,7 @@ const Dawsome = () =>
 			swapClasses(togglePlaybackButton, "play", "playing");
 			togglePlaybackButton.title = "Pause";
 			togglePlaybackButton.innerText = "Pause";
+			setMessage("Playing...");
 		};
 
 		// swap CSS classes on an element
@@ -365,8 +435,22 @@ const Dawsome = () =>
 			element.classList.add(classToAdd);
 		};
 
+		const setMessage = (msg) => {
+			message.innerHTML = msg;
+		};
+
+		const log = (msg) => {
+			if (!window.console) {
+				return;
+			}
+			console.log(msg);
+		};
+
 		const logError = (error) => {
-			console.error("Error: ", error);
+			if (!window.console) {
+				return;
+			}
+			console.error(error);
 		};
 
 		const debounce = (func, wait, immediate) => {
@@ -395,5 +479,8 @@ const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 		return;
 	}
 	const daw = await Dawsome();
-	daw.prepare();
+	let enablerButton = document.getElementById("enableDawsome");
+	enablerButton.addEventListener("click", function(){
+		daw.prepare();
+	});
 })();

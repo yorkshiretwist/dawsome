@@ -8,25 +8,35 @@
 		<div class="wrapper">
 			<h1>DAWsome</h1>
 			<div id="dawsome" class="dawsome disabled">
-				<div class="toolbar">
+				<div class="toolbar row-one">
 					<p id="buttons" class="toolbar-buttons">
 						<button
 							id="togglePlayback"
 							type="button"
 							class="button play"
 							title="Play"
+							disabled
 						>Play</button>
+						<button
+							id="returnPlayhead"
+							type="button"
+							class="button return"
+							title="Return to start"
+							disabled
+						>Return</button>
 						<button
 							id="toggleRecording"
 							type="button"
 							class="button record"
 							title="Start recording"
+							disabled
 						>Record</button>
 						<button
 							id="resetTracks"
 							type="button"
 							class="button reset"
 							title="Reset"
+							disabled
 						>Reset</button>
 					</p>
 					<p id="clock-display" class="toolbar-clock-display">
@@ -40,6 +50,24 @@
 						</span>
 					</p>
 				</div>
+				<div class="toolbar row-two">
+					<p class="message">
+						Ready...
+					</p>
+					<p>
+						<input type="range" min="0" max="100" value="100" class="master-gain" id="masterGain" disabled>
+					</p>
+					<p class="text-r">
+						<span id="downloadLink"></span>
+					</p>
+					<p class="text-r">
+						<button id="render" type="button" class="btn-download">Render</button>
+					</p>
+				</div>
+				<div id="enablerMessage" class="enabler-message">
+					<p>Click the button to enable the recorder</p>
+					<p><button id="enableDawsome">Enable recorder</button></p>
+				</div>
 				<canvas
 					id="frequencyAnalyser"
 					width="1024"
@@ -49,6 +77,7 @@
 				<div id="playlist"></div>
 			</div>
 		</div>
+		<div id="out"></div>
 		<script src="waveform-playlist.js"></script>
 		<script src="dawsome.js" type="text/javascript"></script>
 	</body>
